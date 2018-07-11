@@ -5,7 +5,14 @@ import { AppComponent } from './app.component';
 import { LaunchComponent } from './components/launch/launch.component';
 import { AppRoutingModule } from './/app-routing.module';
 import { RiskCalcComponent } from './components/risk-calc/risk-calc.component';
-import {MatFormFieldModule, MatInputModule, MatRadioModule, MatSelectModule, MatStepperModule} from "@angular/material";
+import {
+  MatButtonModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatRadioModule,
+  MatSelectModule, MatSliderModule,
+  MatStepperModule
+} from "@angular/material";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {RedirectComponent} from "./components/redirect/redirect.component";
@@ -25,10 +32,12 @@ import {RedirectComponent} from "./components/redirect/redirect.component";
     MatStepperModule,
     MatSelectModule,
     MatRadioModule,
+    MatButtonModule,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatSliderModule
   ],
   providers: [],
   bootstrap: [AppComponent]

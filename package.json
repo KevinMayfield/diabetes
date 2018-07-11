@@ -27,11 +27,11 @@
     "@covalent/highlight": "^1.0.1",
     "@covalent/http": "^1.0.1",
     "@covalent/markdown": "^1.0.1",
+    "@types/fhir": "0.0.30",
     "@types/fhir-js-client": "^1.0.0",
     "core-js": "^2.5.4",
     "fhir-js-client": "^1.0.0",
     "hammerjs": "^2.0.8",
-    "ng-fhir": "^2.3.0",
     "rxjs": "^6.0.0",
     "zone.js": "^0.8.26"
   },

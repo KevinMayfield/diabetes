@@ -1,11 +1,12 @@
-<mat-horizontal-stepper [linear]="isLinear" #stepper>
+<mat-horizontal-stepper [linear]="isLinear" #stepper xmlns="http://www.w3.org/1999/html">
   <mat-step [stepControl]="genderFormGroup">
     <form [formGroup]="genderFormGroup">
       <ng-template matStepLabel>Gender</ng-template>
       Are you?
+      <br><br>
       <mat-form-field>
-        <mat-select placeholder="Male/Female only" formControlName="genderCtrl" required>
-          <mat-option *ngFor="let sex of sexes" [value]="sex">
+        <mat-select placeholder="Male/Female only" [value]="selectedSex" formControlName="genderCtrl" required>
+          <mat-option *ngFor="let sex of sexes" [value]="sex.viewValue">
             {{sex.name}}
           </mat-option>
         </mat-select>
@@ -20,8 +21,9 @@
     <form [formGroup]="ageGroupFormGroup">
       <ng-template matStepLabel>Age Group</ng-template>
       How old are you?
-      <mat-radio-group class="example-radio-group" formControlName="ageGroupCtrl">
-        <mat-radio-button class="example-radio-button" *ngFor="let ageGrp of ageGrps" [value]="ageGrp">
+      <br><br>
+      <mat-radio-group class="example-radio-group" formControlName="ageGroupCtrl" [value]="selectedAge">
+        <mat-radio-button class="example-radio-button" *ngFor="let ageGrp of ageGrps" [value]="ageGrp.viewValue">
           {{ageGrp.name}}
         </mat-radio-button>
       </mat-radio-group>
@@ -36,9 +38,12 @@
     <form [formGroup]="ethnicFormGroup">
       <ng-template matStepLabel>Ethnic</ng-template>
       What is your ethnic background?
-      <mat-form-field>
-        <input matInput placeholder="Address" formControlName="ethnicCtrl" required>
-      </mat-form-field>
+      <br><br>
+      <mat-radio-group class="example-radio-group" formControlName="ethnicCtrl" [value]="selectedEthnic">
+        <mat-radio-button class="example-radio-button" *ngFor="let ethnic of ethnicGrps" [value]="ethnic.viewValue">
+          {{ethnic.name}}
+        </mat-radio-button>
+      </mat-radio-group>
       <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button matStepperNext>Next</button>
@@ -49,9 +54,12 @@
     <form [formGroup]="familyFormGroup">
       <ng-template matStepLabel>Family History</ng-template>
       Do you have a father, mother, brother, sister or own child with type 1 or type 2 diabetes?
-      <mat-form-field>
-        <input matInput placeholder="Address" formControlName="familyCtrl" required>
-      </mat-form-field>
+      <br><br>
+      <mat-radio-group class="example-radio-group" formControlName="familyCtrl" >
+        <mat-radio-button class="example-radio-button" *ngFor="let family of familyGrps" [value]="family.viewValue">
+          {{family.name}}
+        </mat-radio-button>
+      </mat-radio-group>
       <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button matStepperNext>Next</button>
@@ -62,9 +70,13 @@
     <form [formGroup]="waistFormGroup">
       <ng-template matStepLabel>Waist Size</ng-template>
       What is your waist size?
-      <mat-form-field>
-        <input matInput placeholder="Address" formControlName="waistCtrl" required>
-      </mat-form-field>
+      <br><br>
+      <mat-slider
+        thumbLabel
+        tickInterval="1"
+        min="10"
+        [value]="waist"
+        max="100"></mat-slider>
       <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button matStepperNext>Next</button>
@@ -75,9 +87,14 @@
     <form [formGroup]="bmiFormGroup">
       <ng-template matStepLabel>BMI</ng-template>
       What is your BMI (body mass index) score?
-      <mat-form-field>
-        <input matInput placeholder="Address" formControlName="bmiCtrl" required>
-      </mat-form-field>
+      <br><br>
+      <mat-slider
+        thumbLabel
+
+        tickInterval="1"
+        min="10"
+        [value]="bmi"
+        max="40"></mat-slider>
       <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button matStepperNext>Next</button>
@@ -88,9 +105,12 @@
     <form [formGroup]="highBPMedsFormGroup">
       <ng-template matStepLabel>highBlood Pressure Medications</ng-template>
       Have you been given medicine for high blood pressure OR told by a doctor that you have high blood pressure?
-      <mat-form-field>
-        <input matInput placeholder="Address" formControlName="highBPMedsCtrl" required>
-      </mat-form-field>
+      <br><br>
+      <mat-radio-group class="example-radio-group" formControlName="highBPMedsCtrl" >
+        <mat-radio-button class="example-radio-button" *ngFor="let family of familyGrps" [value]="family.viewValue">
+          {{family.name}}
+        </mat-radio-button>
+      </mat-radio-group>
       <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button matStepperNext>Next</button>
