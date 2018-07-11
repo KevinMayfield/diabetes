@@ -1,0 +1,114 @@
+<mat-horizontal-stepper [linear]="isLinear" #stepper>
+  <mat-step [stepControl]="genderFormGroup">
+    <form [formGroup]="genderFormGroup">
+      <ng-template matStepLabel>Gender</ng-template>
+      Are you?
+      <mat-form-field>
+        <mat-select placeholder="Male/Female only" formControlName="genderCtrl" required>
+          <mat-option *ngFor="let sex of sexes" [value]="sex">
+            {{sex.name}}
+          </mat-option>
+        </mat-select>
+
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="ageGroupFormGroup">
+    <form [formGroup]="ageGroupFormGroup">
+      <ng-template matStepLabel>Age Group</ng-template>
+      How old are you?
+      <mat-radio-group class="example-radio-group" formControlName="ageGroupCtrl">
+        <mat-radio-button class="example-radio-button" *ngFor="let ageGrp of ageGrps" [value]="ageGrp">
+          {{ageGrp.name}}
+        </mat-radio-button>
+      </mat-radio-group>
+
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="ethnicFormGroup">
+    <form [formGroup]="ethnicFormGroup">
+      <ng-template matStepLabel>Ethnic</ng-template>
+      What is your ethnic background?
+      <mat-form-field>
+        <input matInput placeholder="Address" formControlName="ethnicCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="familyFormGroup">
+    <form [formGroup]="familyFormGroup">
+      <ng-template matStepLabel>Family History</ng-template>
+      Do you have a father, mother, brother, sister or own child with type 1 or type 2 diabetes?
+      <mat-form-field>
+        <input matInput placeholder="Address" formControlName="familyCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="waistFormGroup">
+    <form [formGroup]="waistFormGroup">
+      <ng-template matStepLabel>Waist Size</ng-template>
+      What is your waist size?
+      <mat-form-field>
+        <input matInput placeholder="Address" formControlName="waistCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="bmiFormGroup">
+    <form [formGroup]="bmiFormGroup">
+      <ng-template matStepLabel>BMI</ng-template>
+      What is your BMI (body mass index) score?
+      <mat-form-field>
+        <input matInput placeholder="Address" formControlName="bmiCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="highBPMedsFormGroup">
+    <form [formGroup]="highBPMedsFormGroup">
+      <ng-template matStepLabel>highBlood Pressure Medications</ng-template>
+      Have you been given medicine for high blood pressure OR told by a doctor that you have high blood pressure?
+      <mat-form-field>
+        <input matInput placeholder="Address" formControlName="highBPMedsCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+
+    <br>
+    Your risk level is low
+    <br><br>
+    There is a 1 in 200 chance that you have type 2 diabetes now and a 1 in 20 chance that you could develop diabetes in the next 10 years.
+    <br><br>
+    Even though you have been identified as 'low risk', it is important to maintain a healthy lifestyle. Watching what you eat and increasing the amount of activity you do will help to reduce your risk of diabetes.
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>
