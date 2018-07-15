@@ -1,7 +1,8 @@
+<form [formGroup]="observationForm"  >
 <mat-grid-list cols="4" rowHeight="5:1">
   <mat-grid-tile>
   <mat-form-field>
-  <input class="td-search-box" matInput [matDatepicker]="picker" placeholder="Date of Observation" [value]="observation.effectiveDateTime">
+  <input class="td-search-box" matInput [matDatepicker]="picker" placeholder="Date of Observation" formControlName="effective" [(ngModel)]="observation.effectiveDateTime">
   <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
   <mat-datepicker #picker></mat-datepicker>
 </mat-form-field>
@@ -11,8 +12,9 @@
   </mat-grid-tile>
   <mat-grid-tile>
     <mat-form-field >
-      <input matInput type="number" placeholder="Value" min="10" [value]="observation.valueQuantity.value">
+      <input matInput type="number" placeholder="Value" min="10" formControlName="value" [(ngModel)]="observation.valueQuantity.value">
     </mat-form-field>
   </mat-grid-tile>
   <mat-grid-tile>{{observationDefinition.units}}</mat-grid-tile>
 </mat-grid-list>
+</form>

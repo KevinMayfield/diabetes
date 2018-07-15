@@ -4,7 +4,9 @@ import {AppService} from "../../services/app.service";
 import {} from '@types/fhir';
 import {ObservationDefinition} from "../../model/observation-definition";
 import {StepState, TdStepComponent} from "@covalent/core";
-
+import { v4 as uuid } from 'uuid';
+import Bundle = FHIR.SMART.Bundle;
+import Entry = FHIR.SMART.Entry;
 
 
 @Component({
@@ -95,7 +97,7 @@ export class RiskCalcComponent implements OnInit {
       code: '276361009',
       units: 'cm',
       relatedcodes: [
-        '6276361009'
+        '276361009'
       ]
     }
   ];
@@ -114,7 +116,10 @@ export class RiskCalcComponent implements OnInit {
             }
           ]
         },
-        "valueQuantity": {
+        subject: {
+          "reference": ''
+        },
+        valueQuantity: {
           "unit": obsDef.units,
           "system": "http://unitsofmeasure.org",
           "code": obsDef.units
@@ -225,16 +230,24 @@ export class RiskCalcComponent implements OnInit {
       query: {
         code: {
           $or: [
-            'http://snomed.info/sct|27113001', // weight
-            'http://snomed.info/sct|364589006', // weight
-            'http://snomed.info/sct|50373000', // Body height
-            'http://snomed.info/sct|276361009', // waist circumference
-            'http://snomed.info/sct|160303001' // family history diabetes (add child codes?)
           ]
         },
         patient: this.app.smart.patient.id
       }
     };
+    /*
+    'http://snomed.info/sct|27113001', // weight
+            'http://snomed.info/sct|364589006', // weight
+            'http://snomed.info/sct|50373000', // Body height
+            'http://snomed.info/sct|276361009', // waist circumference
+            'http://snomed.info/sct|160303001', // family history diabetes (add child codes?)
+            'http://snomed.info/sct|60621009' // Body Mass Index
+     */
+    for (let obsDef of this.obsDef) {
+      for (let code of obsDef.relatedcodes) {
+        obsSearchParams.query.code.$or.push('http://snomed.info/sct|'+code);
+      }
+    }
     api.search(obsSearchParams).then(response => {
         const bundle: fhir.Bundle = <fhir.Bundle> response.data;
         console.log('obs search response');
@@ -253,7 +266,8 @@ export class RiskCalcComponent implements OnInit {
                   if (observation.code.coding[0].code === code) {
                     console.log('Found Observation');
                     console.log(observation);
-                    this.obs[i] = observation;
+                    this.obs[i].effectiveDateTime = observation.effectiveDateTime;
+                    this.obs[i].valueQuantity.value = observation.valueQuantity.value ;
                   }
                 }
               }
@@ -270,6 +284,53 @@ export class RiskCalcComponent implements OnInit {
     var ageDifMs = Date.now() - birthday.getTime();
     var ageDate = new Date(ageDifMs); // miliseconds from epoch
     return Math.abs(ageDate.getUTCFullYear() - 1970);
+  }
+
+  onSave() {
+
+    const api: FHIR.SMART.Api = this.app.smart.api;
+
+    let bundle: fhir.Bundle = {
+      type: 'collection',
+      entry: []
+    };
+
+    let patient = this.app.patient;
+    patient.id = uuid();
+    let entry: fhir.BundleEntry = {
+      fullUrl: 'urn:uuid:'+ patient.id,
+      resource: patient
+    };
+
+    entry.resource.resourceType = 'Patient';
+    bundle.entry.push(entry);
+
+    for (let obs of this.obs) {
+      obs.id = uuid();
+
+      obs.subject.reference = 'urn:uuid:'+ patient.id;
+      let entry: fhir.BundleEntry = {
+        fullUrl: 'urn:uuid:'+ obs.id,
+        resource: obs
+      };
+      entry.resource.resourceType = 'Observation';
+      bundle.entry.push(entry);
+    }
+
+    let smartBundle: Entry = {
+      resource: <any>bundle };
+    smartBundle.resource.resourceType = 'Bundle';
+
+    api.create(smartBundle).then(
+      response => {
+        console.log(response);
+      }
+      , error => {
+        console.log(error);
+        console.log('error ^');
+      }
+    );
+
   }
 
 }
