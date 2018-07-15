@@ -12,5 +12,7 @@ export class AppService {
 
   public patient: fhir.Patient;
 
+  public observations: fhir.Observation[] = [];
+
   constructor() { }
 }
