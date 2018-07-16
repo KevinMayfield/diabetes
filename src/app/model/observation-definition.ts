@@ -4,5 +4,6 @@ export class ObservationDefinition {
   display: string;
   units: string;
   relatedcodes:string[];
+  pickList: fhir.Coding[];
 
 }

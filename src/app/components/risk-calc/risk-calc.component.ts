@@ -32,16 +32,22 @@ export class RiskCalcComponent implements OnInit {
   selectedEthnic;
 
   @ViewChild('stepGender')
-  private stepGender :TdStepComponent;
+  private stepGender: TdStepComponent;
 
   @ViewChild('stepAge')
-  private stepAge :TdStepComponent;
+  private stepAge: TdStepComponent;
 
   @ViewChild('stepEthnic')
-  private stepEthnic :TdStepComponent;
+  private stepEthnic: TdStepComponent;
 
   @ViewChild('stepFamily')
-  private stepFamily :TdStepComponent;
+  private stepFamily: TdStepComponent;
+
+  @ViewChild('stepWaist')
+    private stepWaist: TdStepComponent;
+
+  @ViewChild('stepBMI')
+  private stepBMI: TdStepComponent;
 
   sexes = [
     {name: 'Female', viewValue: 'female'},
@@ -74,7 +80,8 @@ export class RiskCalcComponent implements OnInit {
       units: 'kg',
       relatedcodes: [
         '27113001','364589006'
-      ]
+      ],
+      pickList: []
     },
     {
       display: 'Body Height',
@@ -82,7 +89,9 @@ export class RiskCalcComponent implements OnInit {
       units: 'm',
       relatedcodes: [
         '50373000'
-      ]
+      ],
+      pickList: []
+
     },
     {
       display: 'Body Mass Index',
@@ -90,7 +99,8 @@ export class RiskCalcComponent implements OnInit {
       units: 'kg/m2',
       relatedcodes: [
         '60621009'
-      ]
+      ],
+      pickList: []
     },
     {
       display: 'Waist Circumference',
@@ -98,8 +108,27 @@ export class RiskCalcComponent implements OnInit {
       units: 'cm',
       relatedcodes: [
         '276361009'
+      ],
+      pickList: []
+    },
+    {
+      display: 'Family History of Diabetes',
+      code: '',
+      units: '',
+      relatedcodes: [
+        '160303001' , '160274005'
+      ],
+      pickList: [
+        {
+           code: '160303001',
+           display: 'Yes' //'Family history: Diabetes mellitus'
+        },
+        {
+          code: '160274005',
+          display: 'No family history diabetes'
+        }
       ]
-    }
+    },
   ];
 
   ngOnInit() {
@@ -118,13 +147,18 @@ export class RiskCalcComponent implements OnInit {
         },
         subject: {
           "reference": ''
-        },
-        valueQuantity: {
-          "unit": obsDef.units,
-          "system": "http://unitsofmeasure.org",
-          "code": obsDef.units
         }
+
       };
+
+      if (obsDef.code !== '') {
+        observation.valueQuantity =  {
+          "unit": obsDef.units,
+            "system": "http://unitsofmeasure.org",
+            "code": obsDef.units
+        }
+      }
+
       let now = new Date().toISOString();
       observation.effectiveDateTime = now;
       this.obs.push(observation);
@@ -247,6 +281,9 @@ export class RiskCalcComponent implements OnInit {
       for (let code of obsDef.relatedcodes) {
         obsSearchParams.query.code.$or.push('http://snomed.info/sct|'+code);
       }
+      for(let code of obsDef.pickList) {
+        obsSearchParams.query.code.$or.push('http://snomed.info/sct|'+code.code);
+      }
     }
     api.search(obsSearchParams).then(response => {
         const bundle: fhir.Bundle = <fhir.Bundle> response.data;
@@ -263,9 +300,10 @@ export class RiskCalcComponent implements OnInit {
 
                 let obsDef = this.obsDef[i];
                 for (let code of obsDef.relatedcodes) {
-                  if (observation.code.coding[0].code === code) {
+                  if (observation.code.coding[0].code === code && observation.valueQuantity !== undefined) {
                     console.log('Found Observation');
                     console.log(observation);
+                    console.log(this.obs[i]);
                     this.obs[i].effectiveDateTime = observation.effectiveDateTime;
                     this.obs[i].valueQuantity.value = observation.valueQuantity.value ;
                   }
@@ -274,6 +312,14 @@ export class RiskCalcComponent implements OnInit {
             }
           }
         }
+        if (this.obs[3].valueQuantity.value !== undefined) {
+          this.stepWaist.state = StepState.Complete;
+        }
+      if (this.obs[0].valueQuantity.value !== undefined &&
+        this.obs[1].valueQuantity.value !== undefined &&
+        this.obs[2].valueQuantity.value !== undefined) {
+        this.stepBMI.state = StepState.Complete;
+      }
     }, error => {
       console.log('oopsie ' + error);
     });

@@ -36,12 +36,7 @@
   <td-step #stepFamily label="Family History of Diabetes" sublabel="Do you have a father, mother, brother, sister or own child with type 1 or type 2 diabetes?">
     <form class="example-form" [formGroup]="familyFormGroup">
       <ng-template matStepLabel>Family History</ng-template>
-      <mat-radio-group class="example-radio-group" formControlName="familyCtrl" >
-        <mat-radio-button class="example-radio-button" *ngFor="let family of familyGrps" [value]="family.viewValue">
-          {{family.name}}
-        </mat-radio-button>
-      </mat-radio-group>
-
+      <app-observation-create [observationDefinition]="obsDef[4]" [observation]="obs[4]"></app-observation-create>
     </form>
   </td-step>
   <td-step #stepWaist label="Waist Size" sublabel="What is your waist size?">
