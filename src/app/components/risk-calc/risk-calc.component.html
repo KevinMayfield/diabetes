@@ -36,21 +36,21 @@
   <td-step #stepFamily label="Family History of Diabetes" sublabel="Do you have a father, mother, brother, sister or own child with type 1 or type 2 diabetes?">
     <form class="example-form" [formGroup]="familyFormGroup">
       <ng-template matStepLabel>Family History</ng-template>
-      <app-observation-create [observationDefinition]="obsDef[4]" [observation]="obs[4]"></app-observation-create>
+      <app-observation-create [observationDefinition]="obsDef[4]" [observation]="obs[4]" (valid)="checkValidFamily($event)"></app-observation-create>
     </form>
   </td-step>
   <td-step #stepWaist label="Waist Size" sublabel="What is your waist size?">
     <form class="example-form" [formGroup]="waistFormGroup">
       <ng-template matStepLabel>Waist Size</ng-template>
-          <app-observation-create [observationDefinition]="obsDef[3]" [observation]="obs[3]"></app-observation-create>
+          <app-observation-create [observationDefinition]="obsDef[3]" [observation]="obs[3]" (valid)="checkValidWaist($event)"></app-observation-create>
     </form>
   </td-step>
   <td-step #stepBMI label="Body Mass Index" sublabel="What is your BMI (body mass index) score?">
     <form class="example-form" [formGroup]="bmiFormGroup">
       <ng-template matStepLabel>BMI</ng-template>
-        <app-observation-create [observationDefinition]="obsDef[0]" [observation]="obs[0]"></app-observation-create>
-        <app-observation-create [observationDefinition]="obsDef[1]" [observation]="obs[1]"></app-observation-create>
-        <app-observation-create [observationDefinition]="obsDef[2]" [observation]="obs[2]"></app-observation-create>
+        <app-observation-create [observationDefinition]="obsDef[0]" [observation]="obs[0]" (valid)="checkValidBMI($event)"></app-observation-create>
+        <app-observation-create [observationDefinition]="obsDef[1]" [observation]="obs[1]" (valid)="checkValidBMI($event)"></app-observation-create>
+        <app-observation-create [observationDefinition]="obsDef[2]" [observation]="obs[2]" (valid)="checkValidBMI($event)"></app-observation-create>
     </form>
   </td-step>
   <td-step #stepBPMed label="Blood Pressure Medications" sublabel="Have you been given medicine for high blood pressure OR told by a doctor that you have high blood pressure?">

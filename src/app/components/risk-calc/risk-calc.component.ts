@@ -49,6 +49,12 @@ export class RiskCalcComponent implements OnInit {
   @ViewChild('stepBMI')
   private stepBMI: TdStepComponent;
 
+  @ViewChild('stepBPMed')
+  private stepBPMed: TdStepComponent;
+
+  @ViewChild('stepDone')
+  private stepDone: TdStepComponent;
+
   sexes = [
     {name: 'Female', viewValue: 'female'},
     {name: 'Male', viewValue: 'male'}
@@ -170,9 +176,18 @@ export class RiskCalcComponent implements OnInit {
     this.ageGroupFormGroup = this._formBuilder.group({
       ageGroupCtrl: ['', Validators.required]
     });
+
     this.ethnicFormGroup = this._formBuilder.group({
       ethnicCtrl: ['', Validators.required]
     });
+    this.ethnicFormGroup.valueChanges.subscribe(val => {
+       // console.log(val);
+        this.stepEthnic.state = StepState.Complete;
+        this.setActive();
+      }
+      );
+
+
     this.familyFormGroup = this._formBuilder.group({
       familyCtrl: ['', Validators.required]
     });
@@ -185,6 +200,12 @@ export class RiskCalcComponent implements OnInit {
     this.highBPMedsFormGroup = this._formBuilder.group({
       highBPMedsCtrl: ['', Validators.required]
     });
+    this.highBPMedsFormGroup.valueChanges.subscribe(val => {
+       // console.log(val);
+        this.stepBPMed.state = StepState.Complete;
+        this.setActive();
+      }
+    );
 
     const searchParams: FHIR.SMART.ReadParams = {
       type: 'Patient',
@@ -195,14 +216,14 @@ export class RiskCalcComponent implements OnInit {
 
     // Makes use of the SMART on FHIR JS Client search api method
     api.read(searchParams).then(response => {
-        console.log(response.data);
+       // console.log(response.data);
         this.app.patient = <fhir.Patient> response.data;
         if (this.app.patient.gender !== undefined) {
           this.selectedSex = this.app.patient.gender;
           this.stepGender.state = StepState.Complete;
         }
         let age = this._calculateAge(this.app.patient.birthDate);
-        console.log(age);
+       // console.log(age);
         switch (true) {
           case (age < 50):
             this.selectedAge = 1;
@@ -226,7 +247,7 @@ export class RiskCalcComponent implements OnInit {
           for (let extension of this.app.patient.extension) {
             if (extension.url = 'https://fhir.hl7.org.uk/STU3/StructureDefinition/Extension-CareConnect-EthnicCategory-1') {
               if (extension.valueCodeableConcept.coding[0].code !== undefined) {
-                console.log(extension.valueCodeableConcept.coding[0].code);
+             //   console.log(extension.valueCodeableConcept.coding[0].code);
                 const code =extension.valueCodeableConcept.coding[0].code;
                 switch (true) {
                   case (code==='A'):
@@ -245,15 +266,7 @@ export class RiskCalcComponent implements OnInit {
             }
           }
         }
-        if (this.stepGender.state !== StepState.Complete) {
-          this.stepGender.active = true;
-        } else if (this.stepAge.state !== StepState.Complete) {
-          this.stepAge.active = true;
-        } else if (this.stepEthnic.state !== StepState.Complete) {
-          this.stepEthnic.active = true;
-        } else {
-            this.stepFamily.active = true;
-        }
+        this.setActive();
       }, error => {
         console.log(error);
       });
@@ -290,7 +303,7 @@ export class RiskCalcComponent implements OnInit {
         console.log('obs search response');
         if (bundle.entry !== undefined) {
           for (let entry of bundle.entry) {
-            console.log('added observation');
+           // console.log('added observation');
             let observation: fhir.Observation = <fhir.Observation> entry.resource;
             this.app.observations.push(observation);
             if (observation.code !== undefined && observation.code.coding !== undefined) {
@@ -301,9 +314,9 @@ export class RiskCalcComponent implements OnInit {
                 let obsDef = this.obsDef[i];
                 for (let code of obsDef.relatedcodes) {
                   if (observation.code.coding[0].code === code && observation.valueQuantity !== undefined) {
-                    console.log('Found Observation');
-                    console.log(observation);
-                    console.log(this.obs[i]);
+                   // console.log('Found Observation');
+                   // console.log(observation);
+                   // console.log(this.obs[i]);
                     this.obs[i].effectiveDateTime = observation.effectiveDateTime;
                     this.obs[i].valueQuantity.value = observation.valueQuantity.value ;
                   }
@@ -312,24 +325,69 @@ export class RiskCalcComponent implements OnInit {
             }
           }
         }
-        if (this.obs[3].valueQuantity.value !== undefined) {
-          this.stepWaist.state = StepState.Complete;
-        }
-      if (this.obs[0].valueQuantity.value !== undefined &&
-        this.obs[1].valueQuantity.value !== undefined &&
-        this.obs[2].valueQuantity.value !== undefined) {
-        this.stepBMI.state = StepState.Complete;
-      }
+
     }, error => {
       console.log('oopsie ' + error);
     });
   }
+
+
+  setActive() {
+    if (this.stepGender.state !== StepState.Complete) {
+      this.stepGender.active = true;
+    } else if (this.stepAge.state !== StepState.Complete) {
+      this.stepAge.active = true;
+    } else if (this.stepEthnic.state !== StepState.Complete) {
+      this.stepEthnic.active = true;
+    } else if (this.stepFamily.state !== StepState.Complete) {
+      this.stepEthnic.active = true;
+    } else if (this.stepWaist.state !== StepState.Complete) {
+      this.stepWaist.active = true;
+    } else if (this.stepBMI.state !== StepState.Complete) {
+      this.stepBMI.active = true;
+    } else if (this.stepBPMed.state !== StepState.Complete) {
+      this.stepBPMed.active = true;
+    } else {
+      this.stepDone.active = true;
+    }
+  }
+
 
    _calculateAge(birthdayStr) { // birthday is a date
      let birthday = new Date(birthdayStr);
     var ageDifMs = Date.now() - birthday.getTime();
     var ageDate = new Date(ageDifMs); // miliseconds from epoch
     return Math.abs(ageDate.getUTCFullYear() - 1970);
+  }
+
+  checkValidBMI(event) {
+    if (event !== undefined) console.log('bmi '+event);
+    if (event) {
+      this.stepBMI.state = StepState.Complete;
+    } else {
+      this.stepBMI.state = StepState.Required;
+    }
+    this.setActive();
+  }
+
+  checkValidFamily(event) {
+    if (event !== undefined) console.log('family '+event);
+    if (event) {
+      this.stepFamily.state = StepState.Complete;
+    } else {
+      this.stepFamily.state = StepState.Required;
+    }
+    this.setActive();
+  }
+
+  checkValidWaist(event) {
+    if (event !== undefined) console.log('waist '+event);
+    if (event) {
+      this.stepWaist.state = StepState.Complete;
+    } else {
+      this.stepWaist.state = StepState.Required;
+    }
+    this.setActive();
   }
 
   onSave() {
