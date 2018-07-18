@@ -362,12 +362,36 @@ export class RiskCalcComponent implements OnInit {
 
   checkValidBMI(event) {
     if (event !== undefined) console.log('bmi '+event);
-    if (event) {
+
+    let validState = true;
+
+    console.log(this.obs[0]);
+    if (this.obs[0].effectiveDateTime === null || this.obs[0].valueQuantity.value === null) {
+      validState = false;
+      console.log('weight not valid');
+    }
+    if (this.obs[1].effectiveDateTime === null|| this.obs[1].valueQuantity.value === null) {
+      validState = false;
+      console.log('height not valid');
+    }
+    if (this.obs[2].effectiveDateTime === null || this.obs[2].valueQuantity.value === null) {
+      console.log('bmo not valid');
+      if (validState) {
+        this.obs[2].effectiveDateTime = new Date().toISOString();
+        this.obs[2].valueQuantity.value = Math.round(this.obs[0].valueQuantity.value / (this.obs[1].valueQuantity.value * this.obs[1].valueQuantity.value));
+      } else {
+        validState = false;
+      }
+    }
+
+    if (validState) {
+
       this.stepBMI.state = StepState.Complete;
     } else {
-      this.stepBMI.state = StepState.Required;
+      console.log('Section not valid');
+      this.stepBMI.state = StepState.None;
     }
-    this.setActive();
+    //this.setActive();
   }
 
   checkValidFamily(event) {
@@ -375,7 +399,7 @@ export class RiskCalcComponent implements OnInit {
     if (event) {
       this.stepFamily.state = StepState.Complete;
     } else {
-      this.stepFamily.state = StepState.Required;
+      this.stepFamily.state = StepState.None;
     }
     this.setActive();
   }
@@ -385,9 +409,9 @@ export class RiskCalcComponent implements OnInit {
     if (event) {
       this.stepWaist.state = StepState.Complete;
     } else {
-      this.stepWaist.state = StepState.Required;
+      this.stepWaist.state = StepState.None;
     }
-    this.setActive();
+   this.setActive();
   }
 
   onSave() {

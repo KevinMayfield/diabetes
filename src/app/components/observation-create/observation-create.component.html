@@ -23,7 +23,7 @@
   </mat-grid-list>
   <span *ngIf="observationDefinition.pickList !== undefined && observationDefinition.pickList.length > 0">
     {{observationDefinition.display}}
-    <mat-radio-group class="example-radio-group">
+    <mat-radio-group class="example-radio-group"  formControlName="pickCtrl" [value]="code" >
       <mat-radio-button class="example-radio-button" *ngFor="let listCode of observationDefinition.pickList" [value]="listCode"
       [checked]="listCode.code == observation.code.coding[0].code" (change)="codeSelected($event)">
         {{listCode.display}}

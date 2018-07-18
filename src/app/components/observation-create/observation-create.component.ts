@@ -21,33 +21,46 @@ export class ObservationCreateComponent implements OnInit {
 
   observationForm : FormGroup;
 
-  code: string;
-
-  codeCtrl: FormControl;
-
   valueCtrl: FormControl;
+
+  pickCtrl: FormControl;
+
+  code: string = null;
 
   constructor(public app: AppService,
               private _formBuilder: FormBuilder) { }
 
   ngOnInit() {
 
-    this.codeCtrl = new FormControl(this.code);
-    this.codeCtrl.setValue({
-      ///
-    });
 
     if (this.observationDefinition.code !== '') {
+
+      // Value Quantity
+
+      console.log('value');
+
       this.valueCtrl = new FormControl(this.observation.valueQuantity.value);
+
+      this.observationForm = this._formBuilder.group({
+        'value' : [this.valueCtrl, Validators.required],
+        'effective' : [ new FormControl(this.observation.effectiveDateTime), Validators.required ]
+      });
     } else {
-      this.valueCtrl = new FormControl();
+
+      // PickList
+
+      console.log('pick');
+
+      this.pickCtrl = new FormControl(this.code);
+
+      this.observationForm = this._formBuilder.group({
+        'pickCtrl' : [this.pickCtrl, Validators.required],
+        'effective' : [ new FormControl(this.observation.effectiveDateTime), Validators.required ]
+      });
+
     }
 
-    this.observationForm = this._formBuilder.group({
-      'value' : [this.valueCtrl, Validators.required],
-      'code' : [ this.codeCtrl , Validators.required],
-      'effective' : [ new FormControl(this.observation.effectiveDateTime), Validators.required ]
-    });
+
     // force a valid event
     this.change();
   }
